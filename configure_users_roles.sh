@@ -1,6 +1,6 @@
 set -x
 export OS_TOKEN=ADMIN_TOKEN
-export OS_URL=http://controller:35357/v2.0
+export OS_URL=http://localhost:35357/v2.0
 #Deleting services:
 for i in $(openstack service list -f table -c ID); do openstack service delete $i; done
 for i in $(openstack user list -f table -c ID); do openstack user delete $i; done
@@ -8,9 +8,9 @@ for i in $(openstack role list -f table -c ID); do openstack role delete $i; don
 for i in $(openstack project list -f table -c ID); do openstack project delete $i; done
 openstack service create --name keystone --description "OpenStack Identity" identity
 openstack endpoint create \
-  --publicurl http://controller:5000/v2.0 \
-  --internalurl http://controller:5000/v2.0 \
-  --adminurl http://controller:35357/v2.0 \
+  --publicurl http://localhost:5000/v2.0 \
+  --internalurl http://localhost:5000/v2.0 \
+  --adminurl http://localhost:35357/v2.0 \
   --region RegionOne \
   identity
 openstack project create --description "Admin Project" admin
@@ -26,9 +26,9 @@ openstack user create ceilometer --password password --email ceilometer@cord.com
 openstack role add --project service --user ceilometer admin
 openstack service create --name ceilometer --description "Telemetry" metering
 openstack endpoint create \
-  --publicurl http://controller:8777 \
-  --internalurl http://controller:8777 \
-  --adminurl http://controller:8777 \
+  --publicurl http://localhost:8777 \
+  --internalurl http://localhost:8777 \
+  --adminurl http://localhost:8777 \
   --region RegionOne \
   metering
 openstack user list

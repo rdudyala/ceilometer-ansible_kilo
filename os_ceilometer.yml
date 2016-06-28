@@ -102,12 +102,24 @@
  
   # Configuring apache server
   - name: Adding new line
-    lineinfile: dest=/etc/apache2/apache2.conf line="ServerName controller"
+    lineinfile: dest=/etc/apache2/apache2.conf line="ServerName localhost"
 
   - name: Creating wsgi keystone.conf  
     template: src=wsgi-keystone.conf.j2 dest=/etc/apache2/sites-available/wsgi-keystone.conf owner=root group=root mode=0644
-  - name : Configuring keystone
-    script: keystone_setup.sh
+#  - name : Configuring keystone
+#    script: keystone_setup.sh
+  - name: soft linkt to keystons wsgi
+    command: ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
+    ignore_errors: yes
+  - name: creating cgi bin dir
+    command: mkdir -p /var/www/cgi-bin/keystone
+  - name: copying keystone.py as main file
+    template: src=main.j2 dest=/var/www/cgi-bin/keystone/main owner=root group=root mode=0644
+  - name: copying keystone.py as admin file
+    template: src=admin.j2 dest=/var/www/cgi-bin/keystone/admin owner=root group=root mode=0644
+  - name: Restart apache2 service
+    service: name=apache2 state=restarted enabled=true
+
 
   #Installing mongod db server
   - name: Install the Mongo db server
